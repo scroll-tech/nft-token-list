@@ -103,7 +103,7 @@ jobs:
         with:
           message: |
             - [ ] please add token map  
-            env: ${{ vars.GITHUB_BASE_REF }}
+            env: ${{ needs.issue-to-pr.outputs.scroll-env }}
             tokenType: ${{ needs.issue-to-pr.outputs.token-type }}
             L1: ${{ needs.issue-to-pr.outputs.address1 }}
             L2: ${{ needs.issue-to-pr.outputs.address2 }}
