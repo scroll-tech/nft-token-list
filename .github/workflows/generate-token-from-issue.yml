@@ -80,12 +80,11 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            - [ ] please add token map
-            | env | ${{ steps.parse-token.outputs.scrollEnvironment }} |
-            | ------------- | ------------- |
-            | tokenType | ${{ steps.issue-parser.outputs.issueparser_tokenType }} |
-            | L1  | ${{ steps.issue-parser.outputs.issueparser_address1 }} |
-            | L2  | ${{ steps.issue-parser.outputs.issueparser_address2 }} |
+            please add token map \n
+            env: ${{ steps.parse-token.outputs.scrollEnvironment }} \n
+            tokenType: ${{ steps.issue-parser.outputs.issueparser_tokenType }} \n
+            L1: ${{ steps.issue-parser.outputs.issueparser_address1 }} \n
+            L2: ${{ steps.issue-parser.outputs.issueparser_address2 }} \n
           comment_tag: tokenMap
           pr_number: ${{needs.issue-to-pr.outputs.pr-number}}
 
