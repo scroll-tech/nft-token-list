@@ -81,7 +81,6 @@ jobs:
         with:
           message: |
             - [ ] please add token map
-
             | env | ${{ steps.parse-token.outputs.scrollEnvironment }} |
             | ------------- | ------------- |
             | tokenType | ${{ steps.issue-parser.outputs.issueparser_tokenType }} |
