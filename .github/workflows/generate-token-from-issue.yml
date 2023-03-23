@@ -1,0 +1,106 @@
+name: Generate Token From Issue
+
+on:
+  issues:
+    types:
+      - opened
+      - labeled
+
+jobs:
+  issue-to-pr:
+    name: Issue To Pr
+    runs-on: ubuntu-latest
+    outputs:
+      branch-name: new-token/${{ steps.issue-parser.outputs.issueparser_address1 }}
+      pr-number: ${{ steps.create-pr.outputs.pull-request-number }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Parse Issue Body
+        uses: stefanbuck/github-issue-praser@v3
+        id: issue-parser
+        with:
+          template-path: .github/ISSUE_TEMPLATE/add_token.yml
+
+      - name: Parse Token
+        id: parse-token
+        run: node scripts/parseToken.mjs
+        env:
+          RESOLVED_TOKEN_STR: ${{ steps.issue-parser.outputs.jsonString }}
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ steps.parse-token.outputs.scrollEnvironment }}
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Add Token
+        id: add-token
+        run: node scripts/addToken.mjs
+        env:
+          NEW_TOKEN: ${{ steps.parse-token.outputs.new-token }}
+
+      - name: Create Pull Request
+        id: create-pr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          title: '[New NFT Token]: ${{ steps.issue-parser.outputs.issueparser_address1 }} & ${{ steps.issue-parser.outputs.issueparser_address2 }}'
+          body: 'Refer Issue: #${{ github.event.issue.number }}'
+          commit-message: add new token
+          base: ${{ steps.parse-token.outputs.scrollEnvironment }}
+          branch: new-token/${{ steps.issue-parser.outputs.issueparser_address1 }}
+          delete-branch: true
+          add-paths: scroll.tokenlist.json
+          labels: |
+            new token
+
+      - name: Run Duplicate Detection Script
+        id: duplicate-detection
+        run: node scripts/checkDuplication.mjs
+
+      - name: Show Token Map Info
+        if: success()
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            - [ ] please add token map
+
+            | env | ${{ steps.parse-token.outputs.scrollEnvironment }} |
+            | ------------- | ------------- |
+            | tokenType | ${{ steps.issue-parser.outputs.issueparser_tokenType }} |
+            | L1  | ${{ steps.issue-parser.outputs.issueparser_address1 }} |
+            | L2  | ${{ steps.issue-parser.outputs.issueparser_address2 }} |
+          comment_tag: tokenMap
+          pr_number: ${{needs.issue-to-pr.outputs.pr-number}}
+
+      - name: Show Error Message
+        if: steps.duplicate-detection.outcome == 'failure'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Duplicate contract address detected, please update.
+          comment_tag: tokenMap
+          pr_number: ${{needs.issue-to-pr.outputs.pr-number}}
+
+      - name: Mark Pr Not Ready
+        if: steps.duplicate-detection.outcome == 'failure'
+        uses: andymckay/labeler@1.0.4
+        with:
+          add-labels: 'need update'

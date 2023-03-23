@@ -1,0 +1,41 @@
+name: 'Add ERC721/ERC1155 token'
+description: 'here is a NFT token list that we support for now.'
+title: '[NFT Token]: '
+labels: ['new', 'checked']
+body:
+  - type: dropdown
+    id: scrollEnvironment
+    attributes:
+      label: Env
+      description: The token will show in alpha/develop scroll testnet environment
+      options:
+        - alpha
+        - develop
+    validations:
+      required: true
+  - type: dropdown
+    id: tokenType
+    attributes:
+      label: NFT Token Type
+      description: token type
+      options:
+        - ERC721
+        - ERC1155
+    validations:
+      required: true
+  - type: input
+    id: address1
+    attributes:
+      label: Contract on Goerli
+      description: The NFT contract address on Goerli
+      placeholder: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b'
+    validations:
+      required: true
+  - type: input
+    id: address2
+    attributes:
+      label: Contract on Scroll Testnet
+      description: The NFT contract address on Scroll Testnet
+      placeholder: '0xc08632f77736AbbA71356C04dd6af28987B99E8E'
+    validations:
+      required: true
