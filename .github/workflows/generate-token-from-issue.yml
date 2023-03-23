@@ -91,20 +91,18 @@ jobs:
         with:
           message: |
             add token map
-          comment_tag: tokenMap
           pr_number: ${{needs.issue-to-pr.outputs.pr-number}}
 
       - name: Show Error Message
-        if: steps.duplicate-detection.outcome == 'failure'
+        if: steps.duplicate-detection.outputs.duplicated == 'true'
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
             Duplicate contract address detected, please update.
-          comment_tag: tokenMap
           pr_number: ${{needs.issue-to-pr.outputs.pr-number}}
 
       - name: Mark Pr Not Ready
-        if: steps.duplicate-detection.outcome == 'failure'
+        if: steps.duplicate-detection.outputs.duplicated == 'true'
         uses: andymckay/labeler@1.0.4
         with:
           add-labels: 'need update'

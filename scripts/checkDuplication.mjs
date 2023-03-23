@@ -1,4 +1,5 @@
 import { readJson } from './util.mjs';
+import * as core from '@actions/core';
 
 async function validate() {
   const tokenFile = await readJson('../scroll.tokenlist.json');
@@ -9,7 +10,8 @@ async function validate() {
     l1AddressList.size < tokenList.length ||
     l2AddressList.size < tokenList.length
   ) {
-    throw new Error('Already contain the address in list!');
+    console.log('Already contain the address in list!');
+    core.setOutput('duplicated', 'true');
   }
 }
 
