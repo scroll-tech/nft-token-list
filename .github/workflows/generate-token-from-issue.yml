@@ -4,8 +4,7 @@ on:
   issues:
     types:
       - opened
-      - labeled
-
+      - edited
 jobs:
   issue-to-pr:
     name: Issue To Pr
@@ -102,11 +101,12 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            - [ ] please add token map  
-            env: ${{needs.issue-to-pr.outputs.scroll-env }}
-            tokenType: ${{ needs.issue-to-pr.outputs.token-type }}
-            L1: ${{ needs.issue-to-pr.outputs.address1 }}
-            L2: ${{ needs.issue-to-pr.outputs.address2 }}
+            **@Holybasil please add token map**
+            | env | ${{needs.issue-to-pr.outputs.scroll-env }} |
+            | ------------- | ------------- |
+            | tokenType | ${{ needs.issue-to-pr.outputs.token-type }} |
+            | L1  | ${{ needs.issue-to-pr.outputs.address1 }} |
+            | L2  | ${{ needs.issue-to-pr.outputs.address2 }} |
           pr_number: ${{needs.issue-to-pr.outputs.pr-number}}
 
       - name: Show Error Message
@@ -117,7 +117,14 @@ jobs:
             Duplicate contract address detected, please update.
           pr_number: ${{needs.issue-to-pr.outputs.pr-number}}
 
-      - name: Mark Pr Not Ready
+      - name: Mark Pr Duplicate
+        if: steps.duplicate-detection.outputs.duplicated == 'true'
+        uses: andymckay/labeler@1.0.4
+        with:
+          add-labels: 'duplicate'
+          issue-number: ${{needs.issue-to-pr.outputs.pr-number}}
+
+      - name: Mark Issue Need Update
         if: steps.duplicate-detection.outputs.duplicated == 'true'
         uses: andymckay/labeler@1.0.4
         with:
