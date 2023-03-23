@@ -2,9 +2,6 @@ name: Duplicate Detection
 
 on:
   pull_request:
-    types: [synchronize]
-    paths:
-      - scroll.tokenlist.json
 
 jobs:
   duplicate-detection:
