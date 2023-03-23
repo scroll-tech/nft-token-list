@@ -16,6 +16,7 @@ jobs:
       address1: ${{ steps.issue-parser.outputs.issueparser_address1 }}
       address2: ${{ steps.issue-parser.outputs.issueparser_address2 }}
       token-type: ${{ steps.issue-parser.outputs.issueparser_tokenType }}
+      scroll-env: ${{ steps.issue-parser.outputs.issueparser_scrollEnvironment }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -44,7 +45,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: ${{ steps.parse-token.outputs.scrollEnvironment }}
+          ref: ${{ steps.issue-parser.outputs.issueparser_scrollEnvironment }}
 
       - name: Use Node.js 16.x
         uses: actions/setup-node@v3
@@ -67,7 +68,7 @@ jobs:
           title: '[New NFT Token]: ${{ steps.issue-parser.outputs.issueparser_address1 }} & ${{ steps.issue-parser.outputs.issueparser_address2 }}'
           body: 'Refer Issue: #${{ github.event.issue.number }}'
           commit-message: add new token
-          base: ${{ steps.parse-token.outputs.scrollEnvironment }}
+          base: ${{ steps.issue-parser.outputs.issueparser_scrollEnvironment }}
           branch: new-token/${{ steps.issue-parser.outputs.issueparser_address1 }}
           delete-branch: true
           add-paths: scroll.tokenlist.json
@@ -101,11 +102,11 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            - [] please add token map \n 
-            env: ${{ vars.GITHUB_BASE_REF }} \n 
-            tokenType: ${{ needs.issue-to-pr.outputs.token-type }} \n 
-            L1: ${{ needs.issue-to-pr.outputs.address1 }} \n 
-            L2: ${{ needs.issue-to-pr.outputs.address2 }} \n
+            - [ ] please add token map  
+            env: ${{needs.issue-to-pr.outputs.scroll-env }}
+            tokenType: ${{ needs.issue-to-pr.outputs.token-type }}
+            L1: ${{ needs.issue-to-pr.outputs.address1 }}
+            L2: ${{ needs.issue-to-pr.outputs.address2 }}
           pr_number: ${{needs.issue-to-pr.outputs.pr-number}}
 
       - name: Show Error Message

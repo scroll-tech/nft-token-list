@@ -9,7 +9,6 @@ import * as core from '@actions/core';
       l1: address1,
       l2: address2,
     };
-    core.setOutput('scrollEnvironment', scrollEnvironment);
     core.setOutput('new-token', JSON.stringify(newtoken, null, 2));
     process.exit(0);
   } catch (e) {
