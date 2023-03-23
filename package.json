@@ -1,0 +1,12 @@
+{
+  "name": "@scroll/nft-token-list",
+  "author": "scroll",
+  "description": "NFT Token list",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=10"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.0"
+  }
+}
