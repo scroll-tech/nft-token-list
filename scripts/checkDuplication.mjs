@@ -12,6 +12,8 @@ async function validate() {
   ) {
     console.log('Already contain the address in list!');
     core.setOutput('duplicated', 'true');
+  } else {
+    core.setOutput('duplicated', 'false');
   }
 }
 

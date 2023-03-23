@@ -71,26 +71,34 @@ jobs:
           labels: |
             new token
 
+  duplicate-detection:
+    name: Duplicate Detection
+    runs-on: ubuntu-latest
+    needs: issue-to-pr
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.issue-to-pr.outputs.branch-name }}
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Install dependencies
+        run: yarn
+
       - name: Run Duplicate Detection Script
         id: duplicate-detection
         run: node scripts/checkDuplication.mjs
 
-      - uses: actions/github-script@v5
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '👋 Thanks for reporting!'
-            })
       - name: Show Token Map Info
-        if: success()
+        if: steps.duplicate-detection.outputs.duplicated == 'false'
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            add token map
+            ${{ steps.issue-parser.outputs.issueparser_address1 }} - ${{ steps.issue-parser.outputs.issueparser_address2 }}
           pr_number: ${{needs.issue-to-pr.outputs.pr-number}}
 
       - name: Show Error Message
