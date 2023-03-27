@@ -7,6 +7,11 @@
       "type": "ERC721",
       "l1": "0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b",
       "l2": "0xc08632f77736AbbA71356C04dd6af28987B99E8E"
+    },
+    {
+      "type": "ERC1155",
+      "l1": "0x2e3ef7931f2d0e4a7da3dea950ff3f19269d9063",
+      "l2": "0x1A7eb82efB17ddB5B72A9E5313983FB90703C502"
     }
   ],
   "version": {
